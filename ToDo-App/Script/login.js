@@ -35,8 +35,7 @@ function loginUser(){
    if(registeredUserList != undefined ) {
       var currentUser =  registeredUserList.find( function(user) { return user.email === userEmail}  );
       if(currentUser  !=  null &&  userEmail ===  currentUser.email && userPassword === currentUser.password) {
-        //   console.log(currentUser)
-        // if(userEmail ===  currentUser.email && userPassword === currentUser.password ){
+        
             sessionStorage.setItem("currentUser", JSON.stringify(currentUser));
             window.location = "dashboard.html"
         }
@@ -44,27 +43,7 @@ function loginUser(){
             __elementById("loginError").style.display = 'block';  
             return false; 
             }
-      //}
    }
-
-   // Checking already existing mail is
-    // let registeredUsers =  JSON.parse( localStorage.getItem("Users"));
-    // console.log(registeredUsers[0][0]);    
-    // let userList = registeredUsers[0][0];
-    //   if(userList != undefined && userList.length > 0) {
-    //      var currentUser =  userList.find( user  => user.email == email);
-    //      console.log(currentUser)
-        //  if(currentUser) {
-        //     if(userEmail === currentUser.email && userPassword ===  currentUser.password){
-        //         sessionStorage.setItem("currentUser", JSON.stringify(userdata));
-        //         return true;
-        //     }            
-        //  }
-        //  else{
-        //     __elementById("loginError").style.display = 'block';  
-        //     return false; 
-        //     }
-      //}
 
       if(userPassword == undefined || userPassword == "") 
       {
