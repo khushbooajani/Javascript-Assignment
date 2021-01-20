@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>ToDo App</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../Style/style.css">
+</head>
+<body>
+    <Header>
+        <nav class="navbar navbar-expand-md navbar-light bg-light">
+            <h1 class="navbar-brand">Todo App</h1>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="../View/dashboard.html">Dashboard <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../View/profile.html">Profile</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" onclick="logout()">Logout</a>
+                    </li>
+                </ul>
+            <!-- </div> -->
+            </nav>        
+    </Header>
+
+    <main class="section">
+        <div class="container">
+            <div class="center"> 
+                <img class="todo-icon border" src="../images/todo-icon.png">
+                <h1 class="inline ">Todos</h1>
+            </div>
+            <div class="center task">                
+                <input id="search-task" type="text" class="task-btn" placeholder="Search task by Name">
+                <button type="button" id="searchTask" class="btn btn-light task-btn" onclick="searchTaskByName()">Search by Name</button>                 
+                <select id="searchCategory" class=" searchCategory task-btn" onchange="searchByCategory()">
+                    <option >Search by Category...</option>
+                    <option>Personal</option>
+                    <option>Work</option>
+                </select>
+                <select id="searchStatus" class="searchCategory task-btn" onchange="searchByStatus()">
+                    <option >Search by Status...</option>
+                    <option>isPending</option>
+                    <option>isDone</option>
+                </select>
+                <button type="button" id="showTodo" class="btn btn-light task-btn" onclick="displayAllTodos();">Clear filter</button>
+            </div>
+            <div class="center task">
+                <button type="button" id="addTask" class="btn btn-light add-task-btn task-btn"data-toggle="modal" data-target="#addTaskModal">Add New Task</button>                
+                <button type="button" id="deleteTask" class="btn btn-light task-btn" onclick="deleteSelectedTodos()"> Delete Selected checkboxes</button>
+                
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog" aria-labelledby="addTaskModalTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add Task</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group row">
+                            <label for="taskName" class="col-sm-2 col-form-label">Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="taskName" placeholder="Name your task">
+                                <div id="taskNameError" class="invalid-feedback">Task Name is required</div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="category" class="col-sm-2 col-form-label">Category</label>
+                            <div class="col-sm-10">
+                              <div class="form-check">
+                                <input class="form-check-input" type="radio" name="category" id="personalCategory" value="personal">
+                                <label class="form-check-label" for="personalCategory">
+                                  Personal
+                                </label>
+                              </div>
+                    
+                              <div class="form-check">
+                                <input class="form-check-input" type="radio" name="category" id="workCategory" value="work">
+                                <label class="form-check-label" for="workCategory">
+                                  Work
+                                </label>
+                              </div>  
+                                <div id="categoryError" class="invalid-feedback">Category selection is required</div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="public" class="col-sm-2 col-form-label">Public</label>
+                            <div class="col-sm-10">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="public" id="yesPublic" value="yesPublic">
+                                    <label class="form-check-label" for="yesPublic">
+                                      Yes
+                                    </label>
+                                  </div>
+                        
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="public" id="notPublic" value="notPublic">
+                                    <label class="form-check-label" for="notPublic">
+                                      No
+                                    </label>
+                                  </div>  
+                                  <div id="isPublicError" class="invalid-feedback">Is task Public or not ? </div>  
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="status" class="col-sm-2 col-form-label">Status</label>
+                            <div class="col-sm-10">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="status" id="isDone" value="isDone">
+                                    <label class="form-check-label" for="done">
+                                      Done
+                                    </label>
+                                  </div>
+                        
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="status" id="isPending" value="isPending">
+                                    <label class="form-check-label" for="isPending">
+                                      Pending
+                                    </label>
+                                  </div>    
+                                  <div id="statusError" class="invalid-feedback">Status of Task is required</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="todoDate" class="col-2 col-form-label">Date</label>
+                            <div class="col-10">
+                              <input class="form-control" type="date" id="todoDate">
+                              <div id="todoDateError" class="invalid-feedback">Date is required</div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="reminder" class="col-sm-2 col-form-label">Reminder</label>
+                            <div class="col-sm-10">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="isReminder" id="yesReminder" value="yesReminder" onclick="displayRemindeDateDiv(this)">
+                                    <label class="form-check-label" for="yesReminder">
+                                      Yes
+                                    </label>
+                                  </div>
+                        
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="isReminder" id="noReminder" value="noReminder" onclick="displayRemindeDateDiv(this)">
+                                    <label class="form-check-label" for="noReminder">
+                                      No
+                                    </label>
+                                  </div>
+                                  <div id="isReminderError" class="invalid-feedback">Reminder selection is required</div>
+                            </div>
+                        </div>
+                        <div class="form-group row hide" id="reminderDateDiv">
+                            <label for="reminderDate" class="col-2 col-form-label">Reminder Date</label>
+                            <div class="col-10">
+                              <input class="form-control" type="date" id="reminderDate">
+                              <div id="reminderDateError" class="invalid-feedback">Reminder Date is required</div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="todoImage" class="col-sm-2 col-form-label">Todo Image</label>
+                            <div class="col-sm-10">
+                              <input type="file" class="form-control" id="todoImage" placeholder="Profile Image" accept="image/*" onchange="todoImage()" />
+                              <div id="todoImageError" class="invalid-feedback">Todo image Image is required</div>
+                              <img id="previewTodoImage" class="invalid-feedback avatar border" />
+                            </div>
+                          </div>
+                          
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary hide" id="update-task-btn" >Update Task</button>
+                    <button type="button" class="btn btn-primary" id="add-task-btn" onclick="createTask();">Add Task</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- Display ToDos -->
+            <div id="displayTodo" class="center">
+            </div>
+              
+        </div>
+    </main>   
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="../Script/dashboard.js"></script>
+  
+</body>
+</html>
