@@ -53,7 +53,7 @@ function createTask(){
     let todoDate = __elementById("todoDate") ? __elementById("todoDate").value : undefined;
     let isReminder = __querySelector('input[name="isReminder"]:checked')? __querySelector('input[name="isReminder"]:checked').value : undefined;
     let reminderDate = (__elementById("reminderDate")) ? __elementById("reminderDate").value : undefined;
-    let todoImage = (__elementById("previewTodoImage").src) ? __elementById("previewTodoImage").src : undefined;
+    let todoImage = (__elementById("previewTodoImage").src) ? __elementById("previewTodoImage").src : "../images/default-todo-icon.png";
     console.log(todoDate)
     var addTodo = {
         taskName: taskName,
@@ -183,10 +183,11 @@ function displayTodos(todoArr){
         let displayTodoDiv = __elementById("displayTodo");
         let html = ''
         if(todoArr.length > 0){
+            __elementById("noTodo").style.display = "none"
             todoArr.forEach((element, index) => {
                 
                 html += `
-                    <input type="checkbox" class="todoCheckbox" name="todoCheckbox" value="${index}" title="Selected Todo will be Deleted">          
+                    <input type="checkbox" class="todoCheckbox" name="todoCheckbox" value="${element.taskName}" title="Selected Todo will be Deleted">          
                     <button class="edit-todo" type="button" data-toggle="modal" data-target="#addTaskModal" onclick="editTodo(${index})"><i class="fa fa-edit" title="Edit"></i></button>
                     <button class="collapsible" id="${index}" name="taskName">${element.taskName}</button>
                     <div class="content">
@@ -199,6 +200,8 @@ function displayTodos(todoArr){
                     <li class="list-group-item">Status: ${element.status}</li>
                     <li class="list-group-item">ToDo Date: ${element.todoDate}</li>
                     <li class="list-group-item">Reminder Set: ${element.isReminder}</li>
+                    ${(element.isReminder === "yesReminder") ? '<li class="list-group-item">Reminder Set: ' +  element.reminderDate + ' </li>' : ''}
+                    
                     </ul>
                 </div>
                     </div>
@@ -267,7 +270,7 @@ function updateTodo(){
     todoArr[editIndex].todoDate = __elementById("todoDate").value;
     todoArr[editIndex].isReminder = __querySelector('input[name="isReminder"]:checked').value;
     todoArr[editIndex].reminderDate = (__elementById("reminderDate")) ? __elementById("reminderDate").value : undefined;
-    todoArr[editIndex].todoImage = (__elementById("previewTodoImage").src) ? __elementById("previewTodoImage").src : undefined;
+    todoArr[editIndex].todoImage = (__elementById("previewTodoImage").src) ? __elementById("previewTodoImage").src : "../images/default-todo-icon.png";
     console.log(todoArr)
     
     var updateThisTodo = todoArr[editIndex]
@@ -283,29 +286,41 @@ function updateTodo(){
 }
 
 function deleteSelectedTodos(){
+    var confirmation = confirm("Do you want to Delete Selected Todos? ")
+    if(confirmation == true) {
+        let registeredUsersList =  JSON.parse( localStorage.getItem("Users"));
+        if(registeredUsersList != undefined ) {
+            var todoList =  registeredUsersList.find( function(user) { return user.email === currentUser.email}  ).todo;
+            var userIndex =  registeredUsersList.findIndex( function(user) { return user.email === currentUser.email}  );
+            var todoArr = [];
+            todoArr = todoList
+        }
 
-    let registeredUsersList =  JSON.parse( localStorage.getItem("Users"));
-    if(registeredUsersList != undefined ) {
-        var todoList =  registeredUsersList.find( function(user) { return user.email === currentUser.email}  ).todo;
-        var userIndex =  registeredUsersList.findIndex( function(user) { return user.email === currentUser.email}  );
-        var todoArr = [];
-        todoArr = todoList
-    }
-
-    var checkboxesChecked = document.getElementsByName("todoCheckbox");
-    
-    // loop over them all
-    for (var i=0; i<checkboxesChecked.length; i++) {
-        // Delete the checked checkboxes
-        if (checkboxesChecked[i].checked) {
-            todoArr.splice(checkboxesChecked[i].value, 1);
+        var checkboxesChecked = document.getElementsByName("todoCheckbox");
+        
+        var selectedCheckBoxesCounter = 0
+        
+        // loop over them all
+        for (var i=0; i<checkboxesChecked.length; i++) {
+            // Delete the checked checkboxes
+            if (checkboxesChecked[i].checked) {
+                selectedCheckBoxesCounter++;
+                var itemToDelete = checkboxesChecked[i].value;
+                todoArr = todoArr.filter(function(todo){ return todo.taskName !== itemToDelete})
+                //todoArr.splice(checkboxesChecked[i].value, 1);
+            }
+        }
+        if(selectedCheckBoxesCounter > 0) {
+            registeredUsersList[userIndex].todo = todoArr
+            localStorage.setItem("Users",JSON.stringify(registeredUsersList));
+            alert("Selected Todos deleted from the list")
+            window.location="dashboard.html";
+            displayTodos(todoArr);
+        }
+        else{
+            alert("No Todos Selected")
         }
     }
-    registeredUsersList[userIndex].todo = todoArr
-    localStorage.setItem("Users",JSON.stringify(registeredUsersList));
-    alert("Selected Todos deleted from the list")
-    window.location="dashboard.html";
-    displayTodos(todoArr);
 }
 
 function searchTaskByName(){
@@ -326,7 +341,7 @@ function searchTaskByName(){
 }
  
 function searchByCategory(){
-    var searchCategory = document.getElementById("searchCategory");
+    var searchCategory = __elementById("searchCategory");
     var categorySelected = (searchCategory.options[searchCategory.selectedIndex].text).toLowerCase();
     console.log(categorySelected)
     if(todoArr.length > 0){
@@ -345,7 +360,7 @@ function searchByCategory(){
  }
 
 function searchByStatus(){
-    var searchStatus = document.getElementById("searchStatus");
+    var searchStatus = __elementById("searchStatus");
     var statusSelected = searchStatus.options[searchStatus.selectedIndex].text;
     console.log(statusSelected)
     if(todoArr.length > 0){
@@ -364,7 +379,8 @@ function searchByStatus(){
  }
 function displayAllTodos(){
     if(todoArr.length > 0){
-        displayTodos(todoArr)
+        displayTodos(todoArr);
+        __elementById("search-task").value = ""
     }
     else{
         alert("Please Add Todo to Display")
